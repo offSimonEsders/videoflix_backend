@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +33,13 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'account.VideoflixUser'
 
 # Application definition
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'videoflix.simon-esders.de'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'videoflix@simon-esders.de'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = 'videoflix@simon-esders.de'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
