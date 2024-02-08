@@ -21,11 +21,10 @@ from rest_framework import routers
 
 from account.views import UserViewSet
 
-router = routers.SimpleRouter()
-router.register(r'users/register', UserViewSet, basename='users')
+router = routers.DefaultRouter()
 
 urlpatterns = [
-    #path('', include(router.urls)),
+    path('', include(router.urls)),
     path('users/register/', UserViewSet.as_view()),
     path('admin/', admin.site.urls),
 ]
