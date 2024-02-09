@@ -19,12 +19,14 @@ from django.urls import include, path
 
 from rest_framework import routers
 
-from account.views import UserViewSet
+from account.views import RegistrationViewSet, LoginViewSet, LogoutViewSet
 
 router = routers.DefaultRouter()
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('users/register/', UserViewSet.as_view()),
+    path('users/register/', RegistrationViewSet.as_view()),
+    path('users/login/', LoginViewSet.as_view()),
+    path('users/logout/', LogoutViewSet.as_view()),
     path('admin/', admin.site.urls),
 ]
