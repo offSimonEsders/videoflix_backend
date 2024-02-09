@@ -19,12 +19,12 @@ class RegistrationViewSet(APIView):
 
     def post(self, request):
         try:
-            loadedData = json.loads(request.body)
+            loaded_data = json.loads(request.body)
         except:
-            requestData = request.data
-            loadedData = json.loads(json.dumps(requestData.dict()))
-        serializer = RegistrationSerializer(data=loadedData)
-        if serializer.is_valid() and not VideoflixUser.objects.filter(email=loadedData['email']).exists():
+            request_data = request.data
+            loaded_data = json.loads(json.dumps(request_data.dict()))
+        serializer = RegistrationSerializer(data=loaded_data)
+        if serializer.is_valid() and not VideoflixUser.objects.filter(email=loaded_data['email']).exists():
             serializer.save()
             return Response({"response": 'user created successfully'}, status=status.HTTP_201_CREATED)
         return Response({"response": 'somthing went wrong'}, status=status.HTTP_400_BAD_REQUEST)
@@ -35,13 +35,13 @@ class LoginViewSet(APIView):
 
     def post(self, request):
         try:
-            loadedData = json.loads(request.body)
+            loaded_data = json.loads(request.body)
         except:
-            requestData = request.data
-            loadedData = json.loads(json.dumps(requestData.dict()))
+            request_data = request.data
+            loaded_data = json.loads(json.dumps(request_data.dict()))
         try:
-            user = VideoflixUser.objects.get(email=loadedData['email'])
-            if user and user.check_password(loadedData['password']):
+            user = VideoflixUser.objects.get(email=loaded_data['email'])
+            if user and user.check_password(loaded_data['password']):
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({"response": f"{token}"}, status=status.HTTP_200_OK)
             else:
@@ -57,12 +57,12 @@ class LogoutViewSet(APIView):
 
     def delete(self, request):
         try:
-            loadedData = json.loads(request.body)
+            loaded_data = json.loads(request.body)
         except:
-            requestData = request.data
-            loadedData = json.loads(json.dumps(requestData.dict()))
+            request_data = request.data
+            loaded_data = json.loads(json.dumps(request_data.dict()))
         try:
-            Token.objects.filter(key=loadedData['token']).delete()
+            Token.objects.filter(key=loaded_data['token']).delete()
             return Response({'response': 'logout'}, status=status.HTTP_200_OK)
         except:
             return Response({'response': 'failed'}, status=status.HTTP_400_BAD_REQUEST)
