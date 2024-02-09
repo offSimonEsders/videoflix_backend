@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
 from account.models import VideoflixUser
-from account.serializers import RegistrationSerializer, LoginSerializer, LogoutSerializer
+from account.serializers import RegistrationSerializer, LoginSerializer, TokenSerializer
 
 
 # Create your views here.
@@ -43,7 +43,7 @@ class LoginViewSet(APIView):
             user = VideoflixUser.objects.get(email=loaded_data['email'])
             if user and user.check_password(loaded_data['password']):
                 token, created = Token.objects.get_or_create(user=user)
-                return Response({"response": f"{token}"}, status=status.HTTP_200_OK)
+                return Response({"response": f"{token}"}, status=status.HTTP_201_CREATED)
             else:
                 Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
         except:
@@ -51,7 +51,7 @@ class LoginViewSet(APIView):
         return Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutViewSet(APIView):
-    serializer_class = LogoutSerializer
+    serializer_class = TokenSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -66,3 +66,11 @@ class LogoutViewSet(APIView):
             return Response({'response': 'logout'}, status=status.HTTP_200_OK)
         except:
             return Response({'response': 'failed'}, status=status.HTTP_400_BAD_REQUEST)
+
+class CheckTokenView(APIView):
+    serializer_class = TokenSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        return Response({'response': 'verified'}, status=status.HTTP_200_OK)

@@ -19,7 +19,7 @@ class LoginSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['email', 'password']
         extra_kwargs = {'email': {'required': True}}
 
-class LogoutSerializer(serializers.HyperlinkedModelSerializer):
+class TokenSerializer(serializers.HyperlinkedModelSerializer):
     token = serializers.CharField()
 
     class Meta:
