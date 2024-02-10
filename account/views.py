@@ -41,6 +41,8 @@ class LoginViewSet(APIView):
             loaded_data = json.loads(json.dumps(request_data.dict()))
         try:
             user = VideoflixUser.objects.get(email=loaded_data['email'])
+            if not user.verified:
+                return Response({"response": "user is not verified"}, status=status.HTTP_403_FORBIDDEN)
             if user and user.check_password(loaded_data['password']):
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({"response": f"{token}"}, status=status.HTTP_201_CREATED)
