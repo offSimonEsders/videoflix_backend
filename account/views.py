@@ -92,7 +92,7 @@ class CheckVerifyTokenView(APIView):
 
 
 class VerifyUserView(APIView):
-    parser_classes = TokenSerializer
+    serializer_class = TokenSerializer
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
