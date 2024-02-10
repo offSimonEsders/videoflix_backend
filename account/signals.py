@@ -9,15 +9,16 @@ from account.models import VideoflixUser
 
 @receiver(post_save, sender=VideoflixUser)
 def sendMail(sender, instance, created, **kwargs):
-    print("test", instance.verification_code)
-    send_mail(
-        subject="Videoflix verification",
-        message="",
-        from_email="videoflix@simon-esders.de",
-        recipient_list=[instance.email],
-        html_message=render_to_string('email.html', {
-            'username': instance.username,
-        }),
+    if created:
+        send_mail(
+            subject="Videoflix verification",
+            message="",
+            from_email="videoflix@simon-esders.de",
+            recipient_list=[instance.email],
+            html_message=render_to_string('email.html', {
+                'username': instance.username,
+                'verification_code': instance.verification_code
+            }),
 
-        fail_silently=False,
-    )
+            fail_silently=False,
+        )

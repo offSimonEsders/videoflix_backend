@@ -31,6 +31,7 @@ class RegistrationViewSet(APIView):
             return Response({"response": 'user created successfully'}, status=status.HTTP_201_CREATED)
         return Response({"response": 'somthing went wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class LoginViewSet(APIView):
     serializer_class = LoginSerializer
     permission_classes = [permissions.AllowAny]
@@ -57,6 +58,7 @@ class LoginViewSet(APIView):
             return Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class LogoutViewSet(APIView):
     serializer_class = TokenSerializer
     authentication_classes = [TokenAuthentication]
@@ -74,9 +76,31 @@ class LogoutViewSet(APIView):
         except:
             return Response({'response': 'failed'}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class CheckTokenView(APIView):
     serializer_class = TokenSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         return Response({'response': 'verified'}, status=status.HTTP_200_OK)
+
+
+class CheckVerifyTokenView(APIView):
+    serializer_class = TokenSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        try:
+            loaded_data = json.loads(request.body)
+        except:
+            request_data = request.data
+            loaded_data = json.loads(json.dumps(request_data.dict()))
+        try:
+            user = VideoflixUser.objects.filter(verification_code=loaded_data['token'])
+            if user.values('verified')[0]['verified'] == True:
+                return Response({'response': 'Du bist bereits verifiziert'}, status=status.HTTP_208_ALREADY_REPORTED)
+            elif user.values('verified')[0]['verified'] == False:
+                return Response({'response': 'asdasd'}, status=status.HTTP_200_OK)
+            return Response({'response': 'Du bist nicht registriert'}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({'response': 'Du bist nicht registriert'}, status=status.HTTP_400_BAD_REQUEST)
