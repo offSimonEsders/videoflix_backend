@@ -31,6 +31,6 @@ urlpatterns = [
     path('users/logout/', LogoutViewSet.as_view()),
     path('users/checktoken/', CheckTokenView.as_view()),
     path('users/checkverifytoken/', CheckVerifyTokenView.as_view()),
-    path('users/verifyuser', VerifyUserView.as_view()),
+    path('users/verifyuser/', VerifyUserView.as_view()),
     path('admin/', admin.site.urls),
 ]
