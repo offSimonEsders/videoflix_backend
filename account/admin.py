@@ -10,7 +10,8 @@ class AccountAdmin(UserAdmin):
                 'username',
                 'email',
                 'verified',
-                'verification_code'
+                'verification_code',
+                'password'
             ],
         }),
     ]

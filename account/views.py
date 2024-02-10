@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import viewsets, permissions, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
@@ -25,6 +26,7 @@ class RegistrationViewSet(APIView):
             loaded_data = json.loads(json.dumps(request_data.dict()))
         serializer = RegistrationSerializer(data=loaded_data)
         if serializer.is_valid() and not VideoflixUser.objects.filter(email=loaded_data['email']).exists():
+            serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
             serializer.save()
             return Response({"response": 'user created successfully'}, status=status.HTTP_201_CREATED)
         return Response({"response": 'somthing went wrong'}, status=status.HTTP_400_BAD_REQUEST)
@@ -43,6 +45,9 @@ class LoginViewSet(APIView):
             user = VideoflixUser.objects.get(email=loaded_data['email'])
             if not user.verified:
                 return Response({"response": "user is not verified"}, status=status.HTTP_403_FORBIDDEN)
+            print(loaded_data['password'])
+            print(user.check_password(loaded_data['password']))
+            print(user.password)
             if user and user.check_password(loaded_data['password']):
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({"response": f"{token}"}, status=status.HTTP_201_CREATED)
@@ -71,7 +76,6 @@ class LogoutViewSet(APIView):
 
 class CheckTokenView(APIView):
     serializer_class = TokenSerializer
-    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
