@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 
 from account.models import VideoflixUser
 from account.serializers import RegistrationSerializer, LoginSerializer, TokenSerializer
+from account.utils import get_data
 
 
 # Create your views here.
@@ -19,11 +20,7 @@ class RegistrationViewSet(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        try:
-            loaded_data = json.loads(request.body)
-        except:
-            request_data = request.data
-            loaded_data = json.loads(json.dumps(request_data.dict()))
+        loaded_data = get_data(request)
         serializer = RegistrationSerializer(data=loaded_data)
         if serializer.is_valid() and not VideoflixUser.objects.filter(email=loaded_data['email']).exists():
             serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
@@ -37,11 +34,7 @@ class LoginViewSet(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        try:
-            loaded_data = json.loads(request.body)
-        except:
-            request_data = request.data
-            loaded_data = json.loads(json.dumps(request_data.dict()))
+        loaded_data = get_data(request)
         try:
             user = VideoflixUser.objects.get(email=loaded_data['email'])
             if not user.verified:
@@ -65,11 +58,7 @@ class LogoutViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request):
-        try:
-            loaded_data = json.loads(request.body)
-        except:
-            request_data = request.data
-            loaded_data = json.loads(json.dumps(request_data.dict()))
+        loaded_data = get_data(request)
         try:
             Token.objects.filter(key=loaded_data['token']).delete()
             return Response({'response': 'logout'}, status=status.HTTP_200_OK)
@@ -90,11 +79,7 @@ class CheckVerifyTokenView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        try:
-            loaded_data = json.loads(request.body)
-        except:
-            request_data = request.data
-            loaded_data = json.loads(json.dumps(request_data.dict()))
+        loaded_data = get_data(request)
         try:
             user = VideoflixUser.objects.filter(verification_code=loaded_data['token'])
             if user.values('verified')[0]['verified'] == True:
@@ -104,3 +89,15 @@ class CheckVerifyTokenView(APIView):
             return Response({'response': 'Du bist nicht registriert'}, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response({'response': 'Du bist nicht registriert'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerifyUserView(APIView):
+    parser_classes = TokenSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        loaded_data = get_data(request)
+        user = VideoflixUser.objects.get(verification_code=loaded_data['token'])
+        user.verified = True
+        user.save()
+        return Response({'response': 'ok'}, status=status.HTTP_200_OK)

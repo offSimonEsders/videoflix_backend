@@ -19,7 +19,8 @@ from django.urls import include, path
 
 from rest_framework import routers
 
-from account.views import RegistrationViewSet, LoginViewSet, LogoutViewSet, CheckTokenView, CheckVerifyTokenView
+from account.views import RegistrationViewSet, LoginViewSet, LogoutViewSet, CheckTokenView, CheckVerifyTokenView, \
+    VerifyUserView
 
 router = routers.DefaultRouter()
 
@@ -30,5 +31,6 @@ urlpatterns = [
     path('users/logout/', LogoutViewSet.as_view()),
     path('users/checktoken/', CheckTokenView.as_view()),
     path('users/checkverifytoken/', CheckVerifyTokenView.as_view()),
+    path('users/verifyuser', VerifyUserView.as_view()),
     path('admin/', admin.site.urls),
 ]
