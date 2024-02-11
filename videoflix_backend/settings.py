@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'account.apps.AccountConfig',
-    'video',
+    'video.apps.VideoConfig',
     'corsheaders',
     'rest_framework.authtoken',
 ]
