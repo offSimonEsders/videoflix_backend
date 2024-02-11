@@ -9,8 +9,10 @@ from video.tasks import convert_video_to_720p, convert_video_to_480p
 @receiver(post_save, sender=Video)
 def save_video(sender, instance, created, **kwargs):
     if created:
-        instance.video_720p = convert_video_to_720p(instance.original_video.path)
-        instance.video_480p = convert_video_to_480p(instance.original_video.path)
+        convert_video_to_720p(instance.original_video.path)
+        convert_video_to_480p(instance.original_video.path)
+        instance.video_720p = str(instance.original_video).replace('.mp4', '') + '_720p.mp4'
+        instance.video_480p = str(instance.original_video).replace('.mp4', '') + '_480p.mp4'
         instance.save()
 
 
