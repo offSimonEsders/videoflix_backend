@@ -1,0 +1,1 @@
+ffmpeg -i .\tiger.mp4 -vf scale=4000:2000 output2.mp4
