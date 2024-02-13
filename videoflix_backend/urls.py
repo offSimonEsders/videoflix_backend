@@ -23,6 +23,7 @@ from rest_framework import routers
 
 from account.views import RegistrationViewSet, LoginViewSet, LogoutViewSet, CheckTokenView, CheckVerifyTokenView, \
     VerifyUserView
+from video.views import VideoView, MediaView
 
 router = routers.DefaultRouter()
 
@@ -34,5 +35,7 @@ urlpatterns = [
     path('users/checktoken/', CheckTokenView.as_view()),
     path('users/checkverifytoken/', CheckVerifyTokenView.as_view()),
     path('users/verifyuser/', VerifyUserView.as_view()),
+    path('video/', VideoView.as_view()),
     path('admin/', admin.site.urls),
-] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    path('media/<path:path>', MediaView.as_view(), name='protected_media')
+]
