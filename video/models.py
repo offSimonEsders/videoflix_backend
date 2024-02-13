@@ -9,7 +9,7 @@ def get_upload_path(instance, filename):
 class Video(models.Model):
     title = models.CharField(max_length=20, unique=True)
     description = models.CharField(max_length=200)
-    thumbnail = models.FileField(upload_to='thumbnails', blank=True, null=True)
+    thumbnail = models.FileField(upload_to='thumbnails')
     original_video = models.FileField(upload_to=get_upload_path)
     video_720p = models.FileField(upload_to=get_upload_path, blank=True, null=True)
     video_480p = models.FileField(upload_to=get_upload_path, blank=True, null=True)
