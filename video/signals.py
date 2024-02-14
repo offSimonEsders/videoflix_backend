@@ -21,15 +21,10 @@ def save_video(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=Video)
 def delete_video(sender, instance, **kwargs):
     print(instance.original_video)
-    try:
-        os.remove(instance.original_video.path)
-    except:
-        pass
-    try:
-        os.remove(instance.video_720p.path)
-    except:
-        pass
-    try:
-        os.remove(instance.video_480p.path)
-    except:
-        pass
+    pathes = [instance.thumbnail.path, instance.original_video.path, instance.video_720p.path, instance.video_480p.path]
+
+    for path in pathes:
+        try:
+            os.remove(path)
+        except:
+            pass

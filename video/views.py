@@ -1,5 +1,3 @@
-from django.core.cache.backends.base import DEFAULT_TIMEOUT
-from django.shortcuts import render
 from django.views.static import serve
 from rest_framework import permissions
 from rest_framework.response import Response
