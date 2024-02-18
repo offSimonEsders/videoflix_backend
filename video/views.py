@@ -9,7 +9,7 @@ from video.models import Video
 from video.serializers import VideoSerializer
 from videoflix_backend import settings
 
-CACHETTL = 60 * 60 * 2
+CACHETTL = 60
 
 
 class VideoView(APIView):
@@ -23,7 +23,7 @@ class VideoView(APIView):
         return Response(data=serializer.data)
 
 class MediaView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     @method_decorator(cache_page(CACHETTL))
     def get(self, request, path):

@@ -36,7 +36,7 @@ urlpatterns = [
     path('users/checkverifytoken/', CheckVerifyTokenView.as_view()),
     path('users/verifyuser/', VerifyUserView.as_view()),
     path('video/', VideoView.as_view()),
-    path('admin/', admin.site.urls),
     path('media/<path:path>', MediaView.as_view()),
-    path('django-rq/', include('django_rq.urls'))
+    path('django-rq/', include('django_rq.urls')),
+    path('admin/', admin.site.urls)
 ]

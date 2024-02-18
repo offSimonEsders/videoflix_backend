@@ -1,7 +1,6 @@
 from django.db import models
 import os
 
-
 def get_upload_path(instance, filename):
     title_without_spaces = instance.title.replace(" ", "")
     return os.path.join('videos', title_without_spaces, filename)
