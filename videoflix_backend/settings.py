@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-^0c4g2i3er(kc-#v+=aq+j20om(q#-8b3932ddctvntz7u!g3o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '34.147.92.55']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '34.147.92.55', 'videoflix-backend.simon-esders.de']
 
 AUTH_USER_MODEL = 'account.VideoflixUser'
 
