@@ -39,4 +39,4 @@ urlpatterns = [
     path('media/<path:path>', MediaView.as_view()),
     path('django-rq/', include('django_rq.urls')),
     path('admin/', admin.site.urls)
-]
+] + static(settings.STATIC_URL)
