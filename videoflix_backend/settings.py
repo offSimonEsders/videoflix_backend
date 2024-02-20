@@ -158,7 +158,7 @@ CACHES = {"default": {"BACKEND": "django_redis.cache.RedisCache", "LOCATION": "r
 
 RQ_QUEUES = {
     'default': {
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': 6379,
         'DB': 0,
         'PASSWORD': '',
