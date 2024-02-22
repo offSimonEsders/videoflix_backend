@@ -10,7 +10,7 @@ django-rq==2.10.1
 djangorestframework==3.14.0
 gunicorn==21.2.0
 packaging==23.2
-psycopg2==2.9.9
+psycopg2-binary==2.9.9
 python-dateutil==2.8.2
 python-dotenv==1.0.1
 pytz==2024.1
