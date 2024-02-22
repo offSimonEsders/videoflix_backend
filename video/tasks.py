@@ -15,7 +15,7 @@ def convert_video_to_720p(video_file_path):
 
 
 def convert_video_to_480p(video_file_path):
-    new_path = video_file_path.replace('.mp4', '_720p.mp4')
+    new_path = video_file_path.replace('.mp4', '_480p.mp4')
     cmd = [
         "ffmpeg", "-i",
         video_file_path,
