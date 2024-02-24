@@ -132,7 +132,7 @@ class ChangePasswordView(APIView):
     def post(self, request):
         loaded_data = get_data(request)
         user = VideoflixUser.objects.get(reset_code=loaded_data['resetcode'])
-        if user.exists() & user.verified:
+        if user & user.verified:
             user.password = make_password(loaded_data['password'])
             user.save()
             return Response(status=status.HTTP_200_OK)
