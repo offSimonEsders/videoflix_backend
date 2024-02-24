@@ -138,8 +138,9 @@ class ChangePasswordView(APIView):
             user = VideoflixUser.objects.get(reset_code=loaded_data['resetcode'])
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        if user and user.verified:
+        if user and user.verified and len(loaded_data['resetcode']) > 30 and len(loaded_data['password']) >= 8:
             user.password = make_password(loaded_data['password'])
+            user.reset_code = ''
             user.save()
-            return Response(status=status.HTTP_200_OK)
+            return Response({'response': user.password}, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
