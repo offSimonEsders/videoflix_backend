@@ -112,6 +112,5 @@ class SendResetPasswordMail(APIView):
         user = VideoflixUser.objects.get(email=loaded_data['email'])
         if user.verified:
             user.create_reset_code()
-            user.save()
             send_mail_rest_password(user)
         return Response({'response': f'{user.reset_code}'}, status=status.HTTP_200_OK)
