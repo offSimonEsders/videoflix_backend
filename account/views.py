@@ -121,7 +121,7 @@ class CheckResetCode(APIView):
     def post(self, request):
         loaded_data = get_data(request)
         user = VideoflixUser.objects.get(reset_code=loaded_data['resetcode'])
-        if user.exists() & user.verified:
+        if user & user.verified:
             return Response({'response': True}, status=status.HTTP_200_OK)
         else:
             return Response({'response': False}, status=status.HTTP_400_BAD_REQUEST)
