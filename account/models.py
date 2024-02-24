@@ -15,3 +15,4 @@ class VideoflixUser(AbstractUser):
 
     def create_reset_code(self):
         self.reset_code = get_random_string(length=30) + self.email
+        self.save()
