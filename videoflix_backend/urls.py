@@ -23,7 +23,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 from account.views import RegistrationViewSet, LoginViewSet, LogoutViewSet, CheckTokenView, CheckVerifyTokenView, \
-    VerifyUserView, SendResetPasswordMail
+    VerifyUserView, SendResetPasswordMail, CheckResetCode, ChangePasswordView
 from video.views import VideoView, MediaView
 
 router = routers.DefaultRouter()
@@ -37,6 +37,8 @@ urlpatterns = [
     path('users/checkverifytoken/', CheckVerifyTokenView.as_view()),
     path('users/verifyuser/', VerifyUserView.as_view()),
     path('users/requestresetpassword/', SendResetPasswordMail.as_view()),
+    path('users/checkresetcode/', CheckResetCode.as_view()),
+    path('users/changepassword/', ChangePasswordView.as_view()),
     path('video/', VideoView.as_view()),
     path('media/<path:path>', MediaView.as_view()),
     path('django-rq/', include('django_rq.urls')),
