@@ -121,10 +121,10 @@ class CheckResetCode(APIView):
     def post(self, request):
         loaded_data = get_data(request)
         user = VideoflixUser.objects.get(reset_code=loaded_data['resetcode'])
-        if user & user.verified:
-            return Response({'response': True}, status=status.HTTP_200_OK)
+        if user and user.verified:
+            return Response({'response': 'true'}, status=status.HTTP_200_OK)
         else:
-            return Response({'response': False}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'response': 'false'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ChangePasswordView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -132,7 +132,7 @@ class ChangePasswordView(APIView):
     def post(self, request):
         loaded_data = get_data(request)
         user = VideoflixUser.objects.get(reset_code=loaded_data['resetcode'])
-        if user & user.verified:
+        if user and user.verified:
             user.password = make_password(loaded_data['password'])
             user.save()
             return Response(status=status.HTTP_200_OK)
