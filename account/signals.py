@@ -8,7 +8,7 @@ from account.models import VideoflixUser
 
 
 @receiver(post_save, sender=VideoflixUser)
-def sendMail(sender, instance, created, **kwargs):
+def send_mail_register(sender, instance, created, **kwargs):
     if created:
         send_mail(
             subject="Videoflix verification",
@@ -22,3 +22,16 @@ def sendMail(sender, instance, created, **kwargs):
 
             fail_silently=False,
         )
+
+def send_mail_rest_password(instance, **kwargs):
+    send_mail(
+        subject="Videoflix reset your password",
+        message="",
+        from_email="videoflix@simon-esders.de",
+        recipient_list=[instance.email],
+        html_message=render_to_string('email_reset_password.html', {
+            'username': instance.username,
+            'verification_code': instance.reset_code
+        }),
+
+    )

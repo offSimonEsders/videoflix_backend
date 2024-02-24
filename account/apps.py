@@ -6,4 +6,4 @@ class AccountConfig(AppConfig):
     name = 'account'
 
     def ready(self):
-        from .signals import sendMail
+        from .signals import send_mail_register

@@ -6,6 +6,7 @@ from rest_framework.utils import json
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from .signals import send_mail_rest_password
 
 from account.models import VideoflixUser
 from account.serializers import RegistrationSerializer, LoginSerializer, TokenSerializer
@@ -101,3 +102,15 @@ class VerifyUserView(APIView):
         user.verified = True
         user.save()
         return Response({'response': 'ok'}, status=status.HTTP_200_OK)
+
+class SendResetPasswordMail(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        loaded_data = get_data(request)
+        print(loaded_data)
+        user = VideoflixUser.objects.get(email=loaded_data['email'])
+        if user.verified:
+            user.create_reset_code()
+            send_mail_rest_password(user)
+        return Response(status=status.HTTP_200_OK)
