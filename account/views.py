@@ -113,4 +113,4 @@ class SendResetPasswordMail(APIView):
         if user.verified:
             user.create_reset_code()
             send_mail_rest_password(user)
-        return Response(status=status.HTTP_200_OK)
+        return Response({'response': f'{user.reset_code}'}, status=status.HTTP_200_OK)
