@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^0c4g2i3er(kc-#v+=aq+j20om(q#-8b3932ddctvntz7u!g3o'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -100,9 +100,9 @@ WSGI_APPLICATION = 'videoflix_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'videoflix_db',
-        'USER': 'postgres',
-        'PASSWORD': '12345678#',
+        'NAME': os.environ.get('POSTGRESQL_DATABASE_NAME'),
+        'USER': os.environ.get('POSTGRESQL_USER_NAME'),
+        'PASSWORD': os.environ.get('POSTGRESQL_PASSWORD'),
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
