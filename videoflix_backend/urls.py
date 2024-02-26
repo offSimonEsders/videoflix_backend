@@ -24,7 +24,7 @@ from rest_framework import routers
 
 from account.views import RegistrationViewSet, LoginViewSet, LogoutViewSet, CheckTokenView, CheckVerifyTokenView, \
     VerifyUserView, SendResetPasswordMail, CheckResetCode, ChangePasswordView
-from video.views import VideoView, MediaView
+from video.views import MovieView, MediaView, SeriesView, MovieSeriesView
 
 router = routers.DefaultRouter()
 
@@ -39,7 +39,9 @@ urlpatterns = [
     path('users/requestresetpassword/', SendResetPasswordMail.as_view()),
     path('users/checkresetcode/', CheckResetCode.as_view()),
     path('users/changepassword/', ChangePasswordView.as_view()),
-    path('video/', VideoView.as_view()),
+    path('movies/', MovieView.as_view()),
+    path('series/', SeriesView.as_view()),
+    path('moviesandseries/', MovieSeriesView.as_view()),
     path('media/<path:path>', MediaView.as_view()),
     path('django-rq/', include('django_rq.urls')),
     path('admin/', admin.site.urls)
