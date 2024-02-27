@@ -3,11 +3,13 @@ from django.dispatch import receiver
 import os
 import django_rq
 
-from video.models import Video
+from video.models import Video, Movie, Episode
 from video.tasks import convert_video_to_720p, convert_video_to_480p
 
 
 @receiver(post_save, sender=Video)
+@receiver(post_save, sender=Movie)
+@receiver(post_save, sender=Episode)
 def save_video(sender, instance, created, **kwargs):
     if created:
         queue = django_rq.get_queue('default', autocommit=True)
@@ -19,6 +21,8 @@ def save_video(sender, instance, created, **kwargs):
 
 
 @receiver(post_delete, sender=Video)
+@receiver(post_delete, sender=Movie)
+@receiver(post_delete, sender=Episode)
 def delete_video(sender, instance, **kwargs):
     print(instance.original_video)
     pathes = [instance.thumbnail.path, instance.original_video.path, instance.video_720p.path, instance.video_480p.path]
