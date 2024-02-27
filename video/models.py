@@ -20,7 +20,7 @@ class Movie(Video):
 class Serie(models.Model):
     title = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=200)
-    thumbnail = models.FileField(upload_to='thumbnails', blank=True, null=True)
+    thumbnail = models.FileField(upload_to='thumbnails')
 
     def __str__(self):
         return self.title
