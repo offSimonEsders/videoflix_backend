@@ -6,7 +6,7 @@ def get_upload_path(instance, filename):
     return os.path.join('videos', title_without_spaces, filename)
 
 class Video(models.Model):
-    title = models.CharField(max_length=20, unique=True)
+    title = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=200)
     thumbnail = models.FileField(upload_to='thumbnails')
     original_video = models.FileField(upload_to=get_upload_path)
@@ -18,7 +18,7 @@ class Movie(Video):
     pass
 
 class Serie(models.Model):
-    title = models.CharField(max_length=20, unique=True)
+    title = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=200)
     thumbnail = models.FileField(upload_to='thumbnails', blank=True, null=True)
 
