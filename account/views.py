@@ -40,9 +40,6 @@ class LoginViewSet(APIView):
             user = VideoflixUser.objects.get(email=loaded_data['email'])
             if not user.verified:
                 return Response({"response": "user is not verified"}, status=status.HTTP_403_FORBIDDEN)
-            print(loaded_data['password'])
-            print(user.check_password(loaded_data['password']))
-            print(user.password)
             if user and user.check_password(loaded_data['password']):
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({"response": f"{token}"}, status=status.HTTP_201_CREATED)
@@ -86,7 +83,7 @@ class CheckVerifyTokenView(APIView):
             if user.values('verified')[0]['verified'] == True:
                 return Response({'response': 'Du bist bereits verifiziert'}, status=status.HTTP_208_ALREADY_REPORTED)
             elif user.values('verified')[0]['verified'] == False:
-                return Response({'response': 'asdasd'}, status=status.HTTP_200_OK)
+                return Response({'response': 'ok'}, status=status.HTTP_200_OK)
             return Response({'response': 'Du bist nicht registriert'}, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response({'response': 'Du bist nicht registriert'}, status=status.HTTP_400_BAD_REQUEST)
@@ -112,7 +109,7 @@ class SendResetPasswordMail(APIView):
         if user.verified:
             user.create_reset_code()
             send_mail_rest_password(user)
-        return Response({'response': f'{user.reset_code}'}, status=status.HTTP_200_OK)
+        return Response({'response': 'ok'}, status=status.HTTP_200_OK) #{'response': f'{user.reset_code}'}
 
 class CheckResetCode(APIView):
     permission_classes = [permissions.AllowAny]
