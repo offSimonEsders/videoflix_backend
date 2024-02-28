@@ -15,7 +15,7 @@ CACHETTL = 60
 class MovieView(APIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     @method_decorator(cache_page(CACHETTL))
     def get(self, request):
@@ -25,7 +25,7 @@ class MovieView(APIView):
 class SeriesView(APIView):
     queryset = Serie.objects.all()
     serializer_class = SeriesSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     @method_decorator(cache_page(CACHETTL))
     def get(self, request):
@@ -33,7 +33,7 @@ class SeriesView(APIView):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 class MovieSeriesView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     @method_decorator(cache_page(CACHETTL))
     def get(self, request):
