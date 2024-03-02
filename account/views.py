@@ -27,8 +27,8 @@ class RegistrationViewSet(APIView):
             if not VideoflixUser.objects.filter(email=serializer.validated_data['email']).exists():
                 serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
                 serializer.save()
-                return Response({"response": 'user created successfully'}, status=status.HTTP_201_CREATED)
-        return Response({"response": 'somthing went wrong'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"response": 'Nutzer erfolgreich erstellt'}, status=status.HTTP_201_CREATED)
+        return Response({"response": 'Etwas ist schiefgelaufen'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginViewSet(APIView):
@@ -39,15 +39,15 @@ class LoginViewSet(APIView):
         loaded_data = get_data(request)
         serializer = LoginSerializer(data=loaded_data)
         if not serializer.is_valid():
-            return Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"response": 'Login fehlgeschlagen'}, status=status.HTTP_400_BAD_REQUEST)
         user = VideoflixUser.objects.get(email=serializer.validated_data['email'])
         if not user.verified:
-            return Response({"response": "user is not verified"}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"response": "Du bist nicht verifiziert"}, status=status.HTTP_403_FORBIDDEN)
         elif user and user.check_password(serializer.validated_data['password']):
             token, created = Token.objects.get_or_create(user=user)
             return Response({"response": f"{token}"}, status=status.HTTP_201_CREATED)
         else:
-            Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
+            Response({"response": 'Login fehlgeschlagen'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutViewSet(APIView):
@@ -60,9 +60,9 @@ class LogoutViewSet(APIView):
         serializer = TokenSerializer(data=loaded_data)
         if serializer.is_valid():
             Token.objects.filter(key=serializer.validated_data['token']).delete()
-            return Response({'response': 'logout'}, status=status.HTTP_200_OK)
+            return Response({'response': 'Ausgeloggt'}, status=status.HTTP_200_OK)
         else:
-            return Response({'response': 'failed'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'response': 'Fehlgeschlagen'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CheckTokenView(APIView):
@@ -70,7 +70,7 @@ class CheckTokenView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        return Response({'response': 'verified'}, status=status.HTTP_200_OK)
+        return Response({'response': 'Verifiziert'}, status=status.HTTP_200_OK)
 
 
 class CheckVerifyTokenView(APIView):
@@ -152,7 +152,7 @@ class ChangePasswordView(APIView):
                 user.password = make_password(loaded_data['password'])
                 user.reset_code = ''
                 user.save()
-                return Response({'response': user.password}, status=status.HTTP_200_OK)
+                return Response({'response': 'Passwort geändert'}, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
