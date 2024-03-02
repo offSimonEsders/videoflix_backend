@@ -13,14 +13,12 @@ class RegistrationSerializer(serializers.HyperlinkedModelSerializer):
 
 class LoginSerializer(serializers.HyperlinkedModelSerializer):
     password = serializers.CharField(write_only=True)
+    email = serializers.EmailField()
 
     class Meta:
         model = VideoflixUser
         fields = ['email', 'password']
         extra_kwargs = {'email': {'required': True}}
 
-class TokenSerializer(serializers.HyperlinkedModelSerializer):
+class TokenSerializer(serializers.Serializer):
     token = serializers.CharField()
-
-    class Meta:
-        fields = ['token']

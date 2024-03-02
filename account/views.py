@@ -23,10 +23,11 @@ class RegistrationViewSet(APIView):
     def post(self, request):
         loaded_data = get_data(request)
         serializer = RegistrationSerializer(data=loaded_data)
-        if serializer.is_valid() and not VideoflixUser.objects.filter(email=loaded_data['email']).exists():
-            serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
-            serializer.save()
-            return Response({"response": 'user created successfully'}, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            if not VideoflixUser.objects.filter(email=serializer.validated_data['email']).exists():
+                serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
+                serializer.save()
+                return Response({"response": 'user created successfully'}, status=status.HTTP_201_CREATED)
         return Response({"response": 'somthing went wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -36,11 +37,14 @@ class LoginViewSet(APIView):
 
     def post(self, request):
         loaded_data = get_data(request)
+        serializer = LoginSerializer(data=loaded_data)
         try:
-            user = VideoflixUser.objects.get(email=loaded_data['email'])
+            if not serializer.is_valid():
+                return Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
+            user = VideoflixUser.objects.get(email=serializer.validated_data['email'])
             if not user.verified:
                 return Response({"response": "user is not verified"}, status=status.HTTP_403_FORBIDDEN)
-            if user and user.check_password(loaded_data['password']):
+            elif user and user.check_password(serializer.validated_data['password']):
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({"response": f"{token}"}, status=status.HTTP_201_CREATED)
             else:
@@ -57,10 +61,11 @@ class LogoutViewSet(APIView):
 
     def delete(self, request):
         loaded_data = get_data(request)
-        try:
-            Token.objects.filter(key=loaded_data['token']).delete()
+        serializer = TokenSerializer(data=loaded_data)
+        if serializer.is_valid():
+            Token.objects.filter(key=serializer.validated_data['token']).delete()
             return Response({'response': 'logout'}, status=status.HTTP_200_OK)
-        except:
+        else:
             return Response({'response': 'failed'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -78,8 +83,11 @@ class CheckVerifyTokenView(APIView):
 
     def post(self, request):
         loaded_data = get_data(request)
+        serializer = TokenSerializer(data=loaded_data)
         try:
-            user = VideoflixUser.objects.filter(verification_code=loaded_data['token'])
+            if not serializer.is_valid():
+                return Response({'response': 'Deine Anfrage ist nicht gültig'}, status=status.HTTP_400_BAD_REQUEST)
+            user = VideoflixUser.objects.filter(verification_code=serializer.validated_data['token'])
             if user.values('verified')[0]['verified'] == True:
                 return Response({'response': 'Du bist bereits verifiziert'}, status=status.HTTP_208_ALREADY_REPORTED)
             elif user.values('verified')[0]['verified'] == False:
@@ -95,33 +103,41 @@ class VerifyUserView(APIView):
 
     def post(self, request):
         loaded_data = get_data(request)
-        user = VideoflixUser.objects.get(verification_code=loaded_data['token'])
-        user.verified = True
-        user.save()
-        return Response({'response': 'ok'}, status=status.HTTP_200_OK)
+        serializer = TokenSerializer(data=loaded_data)
+        if serializer.is_valid():
+            user = VideoflixUser.objects.get(verification_code=serializer.validated_data['token'])
+            user.verified = True
+            user.save()
+            return Response({'response': 'ok'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'response': 'false'}, status=status.HTTP_400_BAD_REQUEST)
 
 class SendResetPasswordMail(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
         loaded_data = get_data(request)
-        user = VideoflixUser.objects.get(email=loaded_data['email'])
-        if user.verified:
-            user.create_reset_code()
-            send_mail_rest_password(user)
-        return Response({'response': 'ok'}, status=status.HTTP_200_OK) #{'response': f'{user.reset_code}'}
+        try:
+            user = VideoflixUser.objects.get(email=loaded_data['email'])
+            if user.verified:
+                user.create_reset_code()
+                send_mail_rest_password(user)
+            return Response({'response': 'ok'}, status=status.HTTP_200_OK)
+        except:
+            return Response({'response': 'false'}, status=status.HTTP_400_BAD_REQUEST)
 
 class CheckResetCode(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
         loaded_data = get_data(request)
-        try:
-            user = VideoflixUser.objects.get(reset_code=loaded_data['resetcode'])
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        if user and user.verified:
-            return Response({'response': 'true'}, status=status.HTTP_200_OK)
+        serializer = TokenSerializer(data=loaded_data)
+        if serializer.is_valid():
+            user = VideoflixUser.objects.get(reset_code=serializer.validated_data['token'])
+            if user and user.verified:
+                return Response({'response': 'true'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'response': 'false'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'response': 'false'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -130,13 +146,15 @@ class ChangePasswordView(APIView):
 
     def post(self, request):
         loaded_data = get_data(request)
-        try:
-            user = VideoflixUser.objects.get(reset_code=loaded_data['resetcode'])
-        except:
+        serializer = TokenSerializer(data=loaded_data)
+        if serializer.is_valid():
+            user = VideoflixUser.objects.get(reset_code=loaded_data['token'])
+            if user and user.verified and len(loaded_data['token']) > 30 and len(loaded_data['password']) >= 8:
+                user.password = make_password(loaded_data['password'])
+                user.reset_code = ''
+                user.save()
+                return Response({'response': user.password}, status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        if user and user.verified and len(loaded_data['resetcode']) > 30 and len(loaded_data['password']) >= 8:
-            user.password = make_password(loaded_data['password'])
-            user.reset_code = ''
-            user.save()
-            return Response({'response': user.password}, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)

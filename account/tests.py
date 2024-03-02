@@ -37,10 +37,11 @@ class AccountTestCase(TestCase):
         response = self.client.post(url, {'token': verification_code}, format='json')
         self.assertEqual(response.status_code, 200)
 
-    def login_user(self):
-        verification_code = self.register_user()
-        self.user_checkverifytoken(verification_code)
-        self.verify_user(verification_code)
+    def login_user(self, register = True):
+        if register:
+            verification_code = self.register_user()
+            self.user_checkverifytoken(verification_code)
+            self.verify_user(verification_code)
         url = reverse('login')
         response = self.client.post(url, {'email': self.data['email'], 'password': self.data['password']},
                                     format='json')
@@ -51,13 +52,15 @@ class AccountTestCase(TestCase):
     def checkresetcode(self):
         user = VideoflixUser.objects.get(email=self.data['email'])
         url = reverse('checkresetcode')
-        response = self.client.post(url, {'resetcode': user.reset_code}, format='json')
+        response = self.client.post(url, {'token': user.reset_code}, format='json')
         self.assertEqual(response.status_code, 200)
 
     def changepassword(self):
         user = VideoflixUser.objects.get(email=self.data['email'])
         url = reverse('changepassword')
-        response = self.client.post(url, {'resetcode': user.reset_code, 'password': 'ABCDEFG13'}, format='json')
+        response = self.client.post(url, {'token': user.reset_code, 'password': 'ABCDEFG13'}, format='json')
+        self.data.update({'password': 'ABCDEFG13'})
+        self.login_user(False)
         self.assertEqual(response.status_code, 200)
 
     def test_register_user(self):
@@ -77,7 +80,7 @@ class AccountTestCase(TestCase):
     def test_logout_user(self):
         auth_token = self.login_user()
         url = reverse('logout')
-        response = self.client.delete(url, {'token': auth_token}, format='json')
+        response = self.client.delete(url, {'token': auth_token['response']}, format='json')
         self.assertEqual(response.status_code, 200)
 
     def test_requestresetpassword(self):
