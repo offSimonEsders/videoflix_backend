@@ -38,20 +38,16 @@ class LoginViewSet(APIView):
     def post(self, request):
         loaded_data = get_data(request)
         serializer = LoginSerializer(data=loaded_data)
-        try:
-            if not serializer.is_valid():
-                return Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
-            user = VideoflixUser.objects.get(email=serializer.validated_data['email'])
-            if not user.verified:
-                return Response({"response": "user is not verified"}, status=status.HTTP_403_FORBIDDEN)
-            elif user and user.check_password(serializer.validated_data['password']):
-                token, created = Token.objects.get_or_create(user=user)
-                return Response({"response": f"{token}"}, status=status.HTTP_201_CREATED)
-            else:
-                Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
-        except:
+        if not serializer.is_valid():
             return Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
+        user = VideoflixUser.objects.get(email=serializer.validated_data['email'])
+        if not user.verified:
+            return Response({"response": "user is not verified"}, status=status.HTTP_403_FORBIDDEN)
+        elif user and user.check_password(serializer.validated_data['password']):
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({"response": f"{token}"}, status=status.HTTP_201_CREATED)
+        else:
+            Response({"response": 'login failed'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutViewSet(APIView):
@@ -112,6 +108,7 @@ class VerifyUserView(APIView):
         else:
             return Response({'response': 'false'}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class SendResetPasswordMail(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -125,6 +122,7 @@ class SendResetPasswordMail(APIView):
             return Response({'response': 'ok'}, status=status.HTTP_200_OK)
         except:
             return Response({'response': 'false'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CheckResetCode(APIView):
     permission_classes = [permissions.AllowAny]
@@ -140,6 +138,7 @@ class CheckResetCode(APIView):
                 return Response({'response': 'false'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'response': 'false'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ChangePasswordView(APIView):
     permission_classes = [permissions.AllowAny]
